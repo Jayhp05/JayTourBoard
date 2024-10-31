@@ -14,7 +14,7 @@ public class MemberRepositoryTests {
 
     @Test
     public void insertMembers(){
-        IntStream.rangeClosed(1, 10).forEach(i ->{
+        IntStream.rangeClosed(11, 50).forEach(i ->{ // 10.31 - db에 10개의 멤버 데이터만 저장. 11.01 - 추가로 11~50까지 추가 저장.
             Member member = Member.builder()
                     .email("user"+i+"@gmail.com")
                     .password("1234")
