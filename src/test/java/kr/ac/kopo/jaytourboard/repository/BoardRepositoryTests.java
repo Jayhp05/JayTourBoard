@@ -23,7 +23,7 @@ public class BoardRepositoryTests {
 
     @Test
     public void insertBoard(){
-        IntStream.rangeClosed(1, 5).forEach(i ->{
+        IntStream.rangeClosed(1, 100).forEach(i ->{
             Member member = Member.builder()
                     .email("user"+i+"@gmail.com")
                     .build();
