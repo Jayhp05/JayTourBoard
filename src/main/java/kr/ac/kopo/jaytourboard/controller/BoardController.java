@@ -1,9 +1,13 @@
 package kr.ac.kopo.jaytourboard.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.ac.kopo.jaytourboard.dto.BoardDTO;
 import kr.ac.kopo.jaytourboard.dto.PageRequestDTO;
 import kr.ac.kopo.jaytourboard.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping({"/board/", "/Web_report"}) // 2개의 웹을 나누기 위해 사용하였는데, Request 도중 두개 동시에 잡는 현상이 일어나 해결이 필요.
+@RequestMapping({"/Web_report"}) // 2개의 웹을 나누기 위해 사용하였는데, Request 도중 두개 동시에 잡는 현상이 일어나 해결이 필요.
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
@@ -21,11 +25,6 @@ public class BoardController {
     @GetMapping("/FirstPage")
     public String firstPage() {
         return "Web_report/FirstPage"; // templates/Web_report/FirstPage.html
-    }
-
-    @GetMapping("/Login")
-    public String login() {
-        return "Web_report/Login"; // templates/Web_report/Login.html
     }
 
     @GetMapping("/WebPage/1")
@@ -108,6 +107,13 @@ public class BoardController {
         redirectAttributes.addFlashAttribute("msg", bno);
 
         return "redirect:/board/list";
+    }
+
+    @GetMapping("/Logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response){
+        new SecurityContextLogoutHandler().logout(request, response,
+                SecurityContextHolder.getContext().getAuthentication());
+        return "redirect:/Login";
     }
 
 }
