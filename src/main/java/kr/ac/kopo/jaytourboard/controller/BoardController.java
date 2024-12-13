@@ -1,15 +1,14 @@
 package kr.ac.kopo.jaytourboard.controller;
 
+import jakarta.servlet.http.HttpSession;
 import kr.ac.kopo.jaytourboard.dto.BoardDTO;
 import kr.ac.kopo.jaytourboard.dto.PageRequestDTO;
+import kr.ac.kopo.jaytourboard.security.service.AuthenticationService;
 import kr.ac.kopo.jaytourboard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -17,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
+    private final AuthenticationService authenticationService; // 로그인 인증 서비스 추가
 
     @GetMapping("/FirstPage")
     public String firstPage() {
@@ -24,8 +24,29 @@ public class BoardController {
     }
 
     @GetMapping("/Login")
-    public String login() {
-        return "Web_report/Login"; // templates/Web_report/Login.html
+    public String login(HttpSession session) {
+        // 이미 로그인된 사용자라면, 로그인 페이지에 접근하지 않고 게시판 목록으로 리디렉션
+        if (session.getAttribute("username") != null) {
+            return "redirect:/board/list"; // 이미 로그인한 상태이면 게시판 목록 페이지로 리디렉션
+        }
+        return "Web_report/Login"; // 로그인 페이지
+    }
+
+    @PostMapping("/Login")
+    public String loginPost(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) {
+        boolean loginSuccess = authenticationService.authenticate(username, password);
+
+        if (loginSuccess) {
+            return "redirect:/board/list"; // 로그인 후 게시판 목록 페이지로 리다이렉트
+        } else {
+            redirectAttributes.addFlashAttribute("error", "아이디 또는 비밀번호가 일치하지 않습니다."); // 로그인 실패 시 에러 메시지 전달
+            return "redirect:/Web_report/Login"; // 로그인 페이지로 리다이렉트
+        }
+    }
+
+    @GetMapping("/Join")
+    public String join() {
+        return "Web_report/Join";
     }
 
     @GetMapping("/WebPage/1")
