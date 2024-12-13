@@ -53,12 +53,14 @@ public class SecurityConfig{
                                 "/Web_report/**",
                                 "/board/list",
                                 "/WebImage/**",
-                                "Web_report/WebPage/**"
+                                "/Web_report/WebPage/**",
+                                "/board/**",
+                                "/layout/basic"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/Web_report/Login") // 로그인 페이지 경로
+                        .loginPage("/board/list") // 로그인 페이지 경로 "/Web_report/Login"
                         .defaultSuccessUrl("/board/list", true) // 로그인 성공 시 이동할 경로
                         .failureUrl("/login?error=true") // 로그인 실패 시 이동할 경로
                         .permitAll()
